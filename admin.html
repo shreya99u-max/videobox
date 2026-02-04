@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | TV Serials HD</title>
+    <style>
+        /* === ADMIN STYLES === */
+        :root {
+            --primary: #00adb5;
+            --secondary: #393e46;
+            --dark: #1a1a2e;
+            --darker: #16213e;
+            --danger: #ff4757;
+            --success: #00b894;
+            --warning: #fdcb6e;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: #f5f5f5;
+            color: #333;
+        }
+        
+        /* === LOGIN PAGE === */
+        #loginPage {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--darker) 100%);
+        }
+        
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .login-header i {
+            font-size: 48px;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .login-header h1 {
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            width: 100%;
+        }
+        
+        .btn-primary:hover {
+            background: #0099a1;
+            transform: translateY(-2px);
+        }
+        
+        .error-message {
+            color: var(--danger);
+            text-align: center;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        /* === ADMIN DASHBOARD === */
+        #adminDashboard {
+            display: none;
+            min-height: 100vh;
+        }
+        
+        /* Admin Header */
+        .admin-header {
+            background: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .admin-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .admin-title i {
+            font-size: 28px;
+            color: var(--primary);
+        }
+        
+        .admin-title h1 {
+            color: var(--dark);
+            font-size: 24px;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .btn-logout {
+            background: var(--danger);
+            color: white;
+            padding: 10px 20px;
+        }
+        
+        .btn-logout:hover {
+            background: #ff3742;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #555;
+        }
+        
+        /* Admin Layout */
+        .admin-layout {
+            display: flex;
+            min-height: calc(100vh - 70px);
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: var(--dark);
+            padding: 25px 0;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+        }
+        
+        .menu-item {
+            margin-bottom: 5px;
+        }
+        
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #ddd;
+            text-decoration: none;
+            padding: 15px 25px;
+            transition: 0.3s;
+        }
+        
+        .menu-link:hover, .menu-link.active {
+            background: var(--primary);
+            color: white;
+            border-left: 4px solid white;
+        }
+        
+        .menu-link i {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            background: #f8f9fa;
+        }
+        
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .content-title {
+            font-size: 28px;
+            color: var(--dark);
+        }
+        
+        /* Dashboard Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border-top: 4px solid var(--primary);
+            text-align: center;
+        }
+        
+        .stat-icon {
+            font-size: 40px;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        /* Upload Form */
+        .upload-form {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: var(--warning);
+            color: #333;
+        }
+        
+        /* File Upload */
+        .file-upload {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-bottom: 20px;
+        }
+        
+        .file-upload:hover {
+            border-color: var(--primary);
+            background: rgba(0, 173, 181, 0.05);
+        }
+        
+        .file-upload i {
+            font-size: 48px;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        /* Thumbnail Preview */
+        .thumbnail-preview {
+            max-width: 300px;
+            margin-top: 10px;
+        }
+        
+        .thumbnail-preview img {
+            width: 100%;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+        }
+        
+        /* Video Table */
+        .video-table {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+        
+        .table-header {
+            display: grid;
+            grid-template-columns: 100px 2fr 100px 120px 120px 120px;
+            background: var(--primary);
+            color: white;
+            padding: 15px 20px;
+            font-weight: bold;
+        }
+        
+        .table-row {
+            display: grid;
+            grid-template-columns: 100px 2fr 100px 120px 120px 120px;
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            align-items: center;
+        }
+        
+        .table-row:hover {
+            background: #f8f9fa;
+        }
+        
+        .thumb-small {
+            width: 80px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        
+        .video-title {
+            font-weight: 500;
+            color: #333;
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .btn-edit {
+            background: var(--warning);
+            color: #333;
+        }
+        
+        .btn-delete {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .btn-view {
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* Bulk Upload */
+        .bulk-upload-area {
+            border: 3px dashed var(--primary);
+            border-radius: 10px;
+            padding: 50px;
+            text-align: center;
+            margin: 30px 0;
+            background: rgba(0, 173, 181, 0.05);
+        }
+        
+        .progress-container {
+            margin: 20px 0;
+        }
+        
+        .progress-bar {
+            height: 20px;
+            background: #eee;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .admin-layout {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                padding: 15px 0;
+            }
+            
+            .sidebar-menu {
+                display: flex;
+                overflow-x: auto;
+                padding: 0 15px;
+            }
+            
+            .menu-item {
+                flex-shrink: 0;
+                margin-bottom: 0;
+                margin-right: 10px;
+            }
+            
+            .menu-link {
+                padding: 10px 20px;
+                border-radius: 5px;
+            }
+            
+            .table-header, .table-row {
+                grid-template-columns: 80px 1fr 80px 100px 100px 100px;
+                font-size: 14px;
+                padding: 10px 15px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .table-header, .table-row {
+                grid-template-columns: 60px 1fr 60px 80px 80px 80px;
+                font-size: 12px;
+                padding: 8px 10px;
+            }
+            
+            .admin-header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- LOGIN PAGE -->
+    <div id="loginPage">
+        <div class="login-container">
+            <div class="login-header">
+                <i class="fas fa-lock"></i>
+                <h1>Admin Login</h1>
+                <p>TV Serials HD Management Panel</p>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Username</label>
+                <input type="text" id="adminUsername" class="form-control" placeholder="Enter username">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" id="adminPassword" class="form-control" placeholder="Enter password">
+            </div>
+            
+            <button class="btn btn-primary" onclick="adminLogin()">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+            
+            <div class="error-message" id="loginError">
+                Invalid username or password!
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px; color: #666;">
+                <p>Default: admin / password123</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN DASHBOARD -->
+    <div id="adminDashboard">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="admin-title">
+                <i class="fas fa-tv"></i>
+                <h1>TV Serials Admin Panel</h1>
+            </div>
+            
+            <div class="header-right">
+                <div class="user-info">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Administrator</span>
+                </div>
+                <button class="btn btn-logout" onclick="adminLogout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Layout -->
+        <div class="admin-layout">
+            <!-- Sidebar -->
+            <nav class="sidebar">
+                <ul class="sidebar-menu">
+                    <li class="menu-item">
+                        <a href="#" class="menu-link active" onclick="showSection('dashboard')">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" class="menu-link" onclick="showSection('upload')">
+                            <i class="fas fa-upload"></i>
+                            <span>Upload Video</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" class="menu-link" onclick="showSection('bulkUpload')">
+                            <i class="fas fa-folder-plus"></i>
+                            <span>Bulk Upload</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" class="menu-link" onclick="showSection('manage')">
+                            <i class="fas fa-edit"></i>
+                            <span>Manage Videos</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" class="menu-link" onclick="showSection('categories')">
+                            <i class="fas fa-tags"></i>
+                            <span>Categories</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="../index.html" class="menu-link" target="_blank">
+                            <i class="fas fa-eye"></i>
+                            <span>View Site</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <!-- Dashboard Section -->
+                <div id="dashboardSection">
+                    <div class="content-header">
+                        <h2 class="content-title"><i class="fas fa-tachometer-alt"></i> Dashboard Overview</h2>
+                        <button class="btn btn-primary" onclick="showSection('upload')">
+                            <i class="fas fa-plus"></i> Add New Video
+                        </button>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-film"></i>
+                            </div>
+                            <div class="stat-number" id="totalVideos">0</div>
+                            <div class="stat-label">Total Videos</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                            <div class="stat-number" id="totalViews">0</div>
+                            <div class="stat-label">Total Views</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-number" id="todayViews">0</div>
+                            <div class="stat-label">Today's Views</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-hdd"></i>
+                            </div>
+                            <div class="stat-number" id="storageUsed">0 MB</div>
+                            <div class="stat-label">Storage Used</div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Upload -->
+                    <div class="upload-form">
+                        <h3 style="margin-bottom: 20px; color: var(--dark);">
+                            <i class="fas fa-bolt"></i> Quick Upload
+                        </h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Video Title *</label>
+                                <input type="text" id="quickTitle" class="form-control" placeholder="Enter title">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Category</label>
+                                <select id="quickCategory" class="form-control">
+                                    <option value="drama">Drama</option>
+                                    <option value="comedy">Comedy</option>
+                                    <option value="action">Action</option>
+                                    <option value="romance">Romance</option>
+                                    <option value="daily">Daily Soap</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Video URL *</label>
+                            <input type="text" id="quickVideoUrl" class="form-control" placeholder="https://example.com/video.mp4">
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button class="btn btn-success" onclick="quickUpload()">
+                                <i class="fas fa-upload"></i> Quick Upload
+                            </button>
+                            <button class="btn btn-warning" onclick="clearQuickForm()">
+                                <i class="fas fa-redo"></i> Clear
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upload Video Section -->
+                <div id="uploadSection" style="display: none;">
+                    <div class="content-header">
+                        <h2 class="content-title"><i class="fas fa-upload"></i> Upload Video</h2>
+                    </div>
+
+                    <div class="upload-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Video Title *</label>
+                                <input type="text" id="videoTitle" class="form-control" placeholder="Enter video title">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Episode Number</label>
+                                <input type="number" id="episodeNumber" class="form-control" placeholder="1">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Season</label>
+                                <input type="number" id="seasonNumber" class="form-control" placeholder="1">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Category *</label>
+                                <select id="videoCategory" class="form-control">
+                                    <option value="drama">Drama</option>
+                                    <option value="comedy">Comedy</option>
+                                    <option value="action">Action</option>
+                                    <option value="romance">Romance</option>
+                                    <option value="daily">Daily Soap</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Description</label>
+                            <textarea id="videoDescription" class="form-control" rows="3" placeholder="Enter video description"></textarea>
+                        </div>
+
+                        <!-- Video Upload -->
+                        <div class="form-group">
+                            <label class="form-label">Video File *</label>
+                            <div class="file-upload" onclick="document.getElementById('videoFile').click()">
+                                <i class="fas fa-video"></i>
+                                <h3>Click to upload video</h3>
+                                <p>MP4, MKV, AVI | Max 2GB</p>
+                                <input type="file" id="videoFile" accept="video/*" style="display: none;" onchange="handleVideoSelect()">
+                            </div>
+                            <div id="videoFileName" style="color: #666; margin-top: 10px;"></div>
+                        </div>
+
+                        <!-- Thumbnail Upload -->
+                        <div class="form-group">
+                            <label class="form-label">Thumbnail Image *</label>
+                            <div class="file-upload" onclick="document.getElementById('thumbnailFile').click()">
+                                <i class="fas fa-image"></i>
+                                <h3>Click to upload thumbnail</h3>
+                                <p>JPG, PNG | Recommended: 1280x720</p>
+                                <input type="file" id="thumbnailFile" accept="image/*" style="display: none;" onchange="handleThumbnailSelect()">
+                            </div>
+                            <div id="thumbnailPreview" class="thumbnail-preview"></div>
+                        </div>
+
+                        <!-- Direct URL Option -->
+                        <div class="form-group">
+                            <label class="form-label">Or Direct Video URL</label>
+                            <input type="text" id="directVideoUrl" class="form-control" placeholder="https://example.com/video.mp4">
+                        </div>
+
+                        <div class="form-actions">
+                            <button class="btn btn-success" onclick="uploadVideo()">
+                                <i class="fas fa-upload"></i> Upload Video
+                            </button>
+                            <button class="btn btn-warning" onclick="clearForm()">
+                                <i class="fas fa-times"></i> Clear Form
+                            </button>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div id="uploadProgress" style="display: none; margin-top: 20px;">
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="progressFill"></div>
+                                </div>
+                                <div id="progressText" style="text-align: center; margin-top: 10px;">0%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bulk Upload Section -->
+                <div id="bulkUploadSection" style="display: none;">
+                    <div class="content-header">
+                        <h2 class="content-title"><i class="fas fa-folder-plus"></i> Bulk Upload</h2>
+                    </div>
+
+                    <div class="bulk-upload-area">
+                        <i class="fas fa-cloud-upload-alt" style="font-size: 60px; color: var(--primary);"></i>
+                        <h2 style="margin: 20px 0 10px;">Drop your videos here</h2>
+                        <p style="color: #666; margin-bottom: 20px;">Select multiple video files to upload at once</p>
+                        
+                        <input type="file" id="bulkFiles" multiple accept="video/*" style="display: none;" onchange="handleBulkSelect()">
+                        <button class="btn btn-primary" onclick="document.getElementById('bulkFiles').click()">
+                            <i class="fas fa-folder-open"></i> Select Videos
+                        </button>
+                        
+                        <div id="bulkFileList" style="margin-top: 20px; text-align: left; max-height: 200px; overflow-y: auto;"></div>
+                        
+                        <div class="form-group" style="margin-top: 30px;">
+                            <label class="form-label">Common Category for all videos</label>
+                            <select id="bulkCategory" class="form-control">
+                                <option value="drama">Drama</option>
+                                <option value="comedy">Comedy</option>
+                                <option value="action">Action</option>
+                                <option value="romance">Romance</option>
+                                <option value="daily">Daily Soap</option>
+                            </select>
+                        </div>
+                        
+                        <button class="btn btn-success" onclick="startBulkUpload()" id="bulkUploadBtn" style="margin-top: 20px;">
+                            <i class="fas fa-play"></i> Start Bulk Upload
+                        </button>
+                        
+                        <div id="bulkProgress" style="display: none; margin-top: 30px;">
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="bulkProgressFill"></div>
+                                </div>
+                                <div id="bulkProgressText" style="text-align: center; margin-top: 10px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Manage Videos Section -->
+                <div id="manageSection" style="display: none;">
+                    <div class="content-header">
+                        <h2 class="content-title"><i class="fas fa-edit"></i> Manage Videos</h2>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="searchVideos" class="form-control" placeholder="Search videos..." style="width: 250px;" onkeyup="searchVideoList()">
+                            <select id="filterCategory" class="form-control" onchange="filterVideoList()" style="width: 150px;">
+                                <option value="">All Categories</option>
+                                <option value="drama">Drama</option>
+                                <option value="comedy">Comedy</option>
+                                <option value="action">Action</option>
+                                <option value="romance">Romance</option>
+                                <option value="daily">Daily Soap</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="video-table">
+                        <div class="table-header">
+                            <div>Thumbnail</div>
+                            <div>Title</div>
+                            <div>Category</div>
+                            <div>Views</div>
+                            <div>Episode</div>
+                            <div>Actions</div>
+                        </div>
+                        <div id="videoTableBody">
+                            <!-- Videos will load here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Categories Section -->
+                <div id="categoriesSection" style="display: none;">
+                    <div class="content-header">
+                        <h2 class="content-title"><i class="fas fa-tags"></i> Manage Categories</h2>
+                    </div>
+                    <!-- Categories content -->
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- EDIT VIDEO MODAL -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 20px; color: var(--dark);">
+                <i class="fas fa-edit"></i> Edit Video
+            </h2>
+            
+            <div class="form-group">
+                <label class="form-label">Video Title</label>
+                <input type="text" id="editTitle" class="form-control">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea id="editDescription" class="form-control" rows="3"></textarea>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Category</label>
+                    <select id="editCategory" class="form-control">
+                        <option value="drama">Drama</option>
+                        <option value="comedy">Comedy</option>
+                        <option value="action">Action</option>
+                        <option value="romance">Romance</option>
+                        <option value="daily">Daily Soap</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Episode</label>
+                    <input type="number" id="editEpisode" class="form-control">
+                </div>
+            </div>
+            
+            <div class="form-actions" style="margin-top: 30px;">
+                <button class="btn btn-success" onclick="saveVideoEdit()">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+                <button class="btn btn-warning" onclick="closeEditModal()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== ADMIN LOGIN ====================
+        function adminLogin() {
+            const username = document.getElementById('adminUsername').value;
+            const password = document.getElementById('adminPassword').value;
+            const errorDiv = document.getElementById('loginError');
+            
+            // Simple hardcoded login (change in production)
+            if (username === 'admin' && password === 'password123') {
+                localStorage.setItem('adminLoggedIn', 'true');
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('adminDashboard').style.display = 'block';
+                loadAdminDashboard();
+            } else {
+                errorDiv.style.display = 'block';
+                setTimeout(() => {
+                    errorDiv.style.display = 'none';
+                }, 3000);
+            }
+        }
+        
+        function adminLogout() {
+            localStorage.removeItem('adminLoggedIn');
+            location.reload();
+        }
+        
+        // Check if already logged in
+        if (localStorage.getItem('adminLoggedIn') === 'true') {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('adminDashboard').style.display = 'block';
+            window.onload = loadAdminDashboard;
+        }
+        
+        // ==================== DASHBOARD FUNCTIONS ====================
+        function loadAdminDashboard() {
+            updateStats();
+            loadVideoTable();
+            showSection('dashboard');
+        }
+        
+        function showSection(sectionName) {
+            // Hide all sections
+            const sections = ['dashboardSection', 'uploadSection', 'bulkUploadSection', 'manageSection', 'categoriesSection'];
+            sections.forEach(section => {
+                document.getElementById(section).style.display = 'none';
+            });
+            
+            // Show selected section
+            document.getElementById(sectionName + 'Section').style.display = 'block';
+            
+            // Update active menu
+            document.querySelectorAll('.menu-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+        
+        function updateStats() {
+            const videos = JSON.parse(localStorage.getItem('tvSerialsVideos')) || [];
+            
+            document.getElementById('totalVideos').textContent = videos.length;
+            
+            const totalViews = videos.reduce((sum, video) => sum + (video.views || 0), 0);
+            document.getElementById('totalViews').textContent = totalViews.toLocaleString();
+            
+            const today = new Date().toISOString().split('T')[0];
+            const todayViews = videos
+                .filter(video => video.uploadDate === today)
+                .reduce((sum, video) => sum + (video.views || 0), 0);
+            document.getElementById('todayViews').textContent = todayViews.toLocaleString();
+            
+            const storageUsed = videos.length * 500; // Approx 500MB per video
+            document.getElementById('storageUsed').textContent = storageUsed + ' MB';
+        }
+        
+        // ==================== VIDEO UPLOAD FUNCTIONS ====================
+        let selectedVideoFile = null;
+        let selectedThumbnailFile = null;
+        
+        function handleVideoSelect() {
+            const fileInput = document.getElementById('videoFile');
+            if (fileInput.files.length > 0) {
+                selectedVideoFile = fileInput.files[0];
+                document.getElementById('videoFileName').textContent = `Selected: ${selectedVideoFile.name} (${(selectedVideoFile.size / (1024*1024)).toFixed(2)} MB)`;
+            }
+        }
+        
+        function handleThumbnailSelect() {
+            const fileInput = document.getElementById('thumbnailFile');
+            if (fileInput.files.length > 0) {
+                selectedThumbnailFile = fileInput.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('thumbnailPreview').innerHTML = `
+                        <img src="${e.target.result}" alt="Thumbnail Preview">
+                    `;
+                };
+                reader.readAsDataURL(selectedThumbnailFile);
+            }
+        }
+        
+        function uploadVideo() {
+            const title = document.getElementById('videoTitle').value.trim();
+            const category = document.getElementById('videoCategory').value;
+            const episode = document.getElementById('episodeNumber').value || 1;
+            const season = document.getElementById('seasonNumber').value || 1;
+            const description = document.getElementById('videoDescription').value.trim();
+            const directUrl = document.getElementById('directVideoUrl').value.trim();
+            
+            if (!title) {
+                alert('Please enter video title');
+                return;
+            }
+            
+            if (!selectedVideoFile && !directUrl) {
+                alert('Please select a video file or provide a direct URL');
+                return;
+            }
+            
+            if (!selectedThumbnailFile) {
+                alert('Please select a thumbnail image');
+                return;
+            }
+            
+            // Simulate upload progress
+            const progressDiv = document.getElementById('uploadProgress');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            
+            progressDiv.style.display = 'block';
+            let progress = 0;
+            
+            const uploadInterval = setInterval(() => {
+                progress += 10;
+                progressFill.style.width = progress + '%';
+                progressText.textContent = progress + '%';
+                
+                if (progress >= 100) {
+                    clearInterval(uploadInterval);
+                    
+                    // Create video object
+                    const videos = JSON.parse(localStorage.getItem('tvSerialsVideos')) || [];
+                    const newVideo = {
+                        id: Date.now(),
+                        title: title,
+                        description: description || 'No description',
+                        videoUrl: directUrl || URL.createObjectURL(selectedVideoFile),
+                        thumbnail: selectedThumbnailFile ? URL.createObjectURL(selectedThumbnailFile) : 'https://images.unsplash.com/photo-1574267432553-4b4628081c31?w=400',
+                        category: category,
+                        episode: parseInt(episode),
+                        season: parseInt(season),
+                        views: 0,
+                        duration: "45:00",
+                        uploadDate: new Date().toISOString().split('T')[0]
+                    };
+                    
+                    videos.push(newVideo);
+                    localStorage.setItem('tvSerialsVideos', JSON.stringify(videos));
+                    
+                    alert('Video uploaded successfully!');
+                    clearForm();
+                    progressDiv.style.display = 'none';
+                    progressFill.style.width = '0%';
+                    progressText.textContent = '0%';
+                    
+                    updateStats();
+                    if (document.getElementById('manageSection').style.display !== 'none') {
+                        loadVideoTable();
+                    }
+                }
+            }, 200);
+        }
+        
+        function quickUpload() {
+            const title = document.getElementById('quickTitle').value.trim();
+            const category = document.getElementById('quickCategory').value;
+            const videoUrl = document.getElementById('quickVideoUrl').value.trim();
+            
+            if (!title || !videoUrl) {
+                alert('Please fill all required fields');
+                return;
+            }
+            
+            const videos = JSON.parse(localStorage.getItem('tvSerialsVideos')) || [];
+            const newVideo = {
+                id: Date.now(),
+                title: title,
+                description: 'Quick upload',
+                videoUrl: videoUrl,
+                thumbnail: 'https://images.unsplash.com/photo-1574267432553-4b4628081c31?w=400',
+                category: category,
+                episode: videos.filter(v => v.category === category).length + 1,
+                season: 1,
+                views: 0,
+                duration: "45:00",
+                uploadDate: new Date().toISOString().split('T')[0]
+            };
+            
+            videos.push(newVideo);
+            localStorage.setItem('tvSerialsVideos', JSON.stringify(videos));
+            
+            alert('Video added successfully!');
+            clearQuickForm();
+            updateStats();
+        }
+        
+        function clearForm() {
+            document.getElementById('videoTitle').value = '';
+            document.getElementById('episodeNumber').value = '';
+            document.getElementById('seasonNumber').value = '';
+            document.getElementById('videoDescription').value = '';
+            document.getElementById('directVideoUrl').value = '';
+            document.getElementById('videoFile').value = '';
+            document.getElementById('thumbnailFile').value = '';
+            document.getElementById('videoFileName').textContent = '';
+            document.getElementById('thumbnailPreview').innerHTML = '';
+            selectedVideoFile = null;
+            selectedThumbnailFile = null;
+        }
+        
+        function clearQuickForm() {
+            document.getElementById('quickTitle').value = '';
+            document.getElementById('quickVideoUrl').value = '';
+        }
+        
+        // ==================== BULK UPLOAD ====================
+        let bulkFiles = [];
+        
+        function handleBulkSelect() {
+            const fileInput = document.getElementById('bulkFiles');
+            bulkFiles = Array.from(fileInput.files);
+            
+            const fileListDiv = document.getElementById('bulkFileList');
+            fileListDiv.innerHTML = '<h4>Selected Files:</h4>';
+            
+            bulkFiles.forEach((file, index) => {
+                fileListDiv.innerHTML += `
+                    <div style="padding: 5px 0; border-bottom: 1px solid #eee;">
+                        ${index + 1}. ${file.name} (${(file.size / (1024*1024)).toFixed(2)} MB)
+                    </div>
+                `;
+            });
+        }
+        
+        function startBulkUpload() {
+            if (bulkFiles.length === 0) {
+                alert('Please select files first');
+                return;
+            }
+            
+            const category = document.getElementById('bulkCategory').value;
+            const bulkProgressDiv = document.getElementById('bulkProgress');
+            const bulkProgressFill = document.getElementById('bulkProgressFill');
+            const bulkProgressText = document.getElementById('bulkProgressText');
+            
+            bulkProgressDiv.style.display = 'block';
+            document.getElementById('bulkUploadBtn').disabled = true;
+            
+            let uploadedCount = 0;
+            const totalFiles = bulkFiles.length;
+            
+            bulkFiles.forEach((file, index) => {
+                setTimeout(() => {
+                    // Simulate upload for each file
+                    const videos = JSON.parse(localStorage.getItem('tvSerialsVideos')) || [];
+                    const newVideo = {
+                        id: Date.now() + index,
+                        title: `Bulk Upload - ${file.name.split('.')[0]}`,
+                        description: 'Uploaded via bulk upload',
+                        videoUrl: URL.createObjectURL(file),
+                        thumbnail: 'https://images.unsplash.com/photo-1574267432553-4b4628081c31?w=400',
+                        category: category,
+                        episode: videos.filter(v => v.category === category).length + 1,
+                        season: 1,
+                        views: 0,
+                        duration: "45:00",
+                        uploadDate: new Date().toISOString().split('T')[0]
+                    };
+                    
+                    videos.push(newVideo);
+                    localStorage.setItem('tvSerialsVideos', JSON.stringify(videos));
+                    
+                    uploadedCount++;
+                    const progress = Math.round((uploadedCount / totalFiles) * 100);
+                    bulkProgressFill.style.width = progress + '%';
+                    bulkProgressText.textContent = `Uploaded ${uploadedCount} of ${totalFiles} files (${progress}%)`;
+                    
+                    if (uploadedCount === totalFiles) {
+                        setTimeout(() => {
+                            alert(`Successfully uploaded ${totalFiles} videos!`);
+                            bulkProgressDiv.style.display = 'none';
+                            document.getElementById('bulkUploadBtn').disabled = false;
+                            document.getElementById('bulkFileList').innerHTML = '';
+                            bulkFiles = [];
+                            updateStats();
+                        }, 500);
+                    }
+                }, index * 1000); // Simulate 1 second per file
+            });
+        }
+        
+        // ==================== VIDEO MANAGEMENT ====================
+        function loadVideoTable() {
+            const videos = JSON.parse(localStorage.getItem('tvSerialsVideos')) || [];
+            const tableBody = document.getElementById('videoTableBody');
+            
+            if (videos.length === 0) {
+                tableBody.innerHTML = `
+                    <div style="padding: 20px; text-align: center; color: #666;">
+                        No videos found. Upload some videos first.
+                    </div>
+                `;
+                return;
+            }
+            
+            tableBody.innerHTML = '';
+            videos.forEach(video => {
+                tableBody.innerHTML += `
+                    <div class="table-row" id="videoRow_${video.id}">
+                        <div>
+                            <img src="${video.thumbnail}" alt="Thumb" class="thumb-small">
+                        </div>
+                        <div class="video-title">${video.title}</div>
+                        <div>
+                            <span style="background: #eee; padding: 3px 8px; border-radius: 3px;">
+                                ${video.category}
+                            </span>
+                        </div>
+                        <div>${video.views.toLocaleString()}</div>
+                        <div>S${video.season || 1} E${video.episode || 1}</div>
+                        <div>
+                            <div class="action-buttons">
+                                <button class="btn-sm btn-edit" onclick="editVideo(${video.id})">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn-sm btn-view" onclick="previewVideo(${video.id})">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn-sm btn-delete" onclick="deleteVideo(${video.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        
+        function searchVideoList() {
+            const searchTerm = document.getElementById('searchVideos').value.toLowerCase();
+            const rows = document.querySelectorAll('.table-row');
+            
+            rows.forEach(row => {
+                const title = row.querySelector('.video-title').textContent.toLowerCase();
+                if (title.includes(searchTerm)) {
+                    row.style.display = 'grid';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+        
+        function filterVideoList() {
+            const category = document.getElementById('filterCategory').value;
+            const rows = document.querySelectorAll('.table-row');
+            
+            rows.forEach(row => {
+                if (!category || row.textContent.toLowerCase().includes(category)) {
+                    row.style.display = 'grid';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+        
+        let editingVideoId = null;
+        
+        function editVideo(videoId) {
+            const videos = JSON.parse(localStorage.getItem('tvSerialsVideos')) || [];
+            const video = videos.find(v => v.id === videoId);
+            
+            if (video) {
+                editingVideoId = videoId;
+                document.getElementById('editTitle').value = video.title;
+                document.getElementById('editDescription').value = video.description;
+                document.getElementById('editCategory').value = video.category;
+                document.getElementById('editEpisode').value = video.episode || 1;
+                document.getElementById('editModal').style.display = 'flex';
+            }
+        }
+        
+        function saveVideoEdit() {
+            if (!editingVideoId) return;
+            
+            const videos = JSON.parse(localStorage.getItem('tvSerialsVideos')) || [];
+            const videoIndex = videos.findIndex(v => v.id === editingVideoId);
+            
+            if (videoIndex !== -1) {
+                videos[videoIndex].title = document.getElementById('editTitle').value;
+                videos[videoIndex].description = document.getElementById('editDescription').value;
+                videos[videoIndex].category = document.getElementById('editCategory').value;
+                videos[videoIndex].episode = parseInt(document.getElementById('editEpisode').value);
+                
+                localStorage.setItem('tvSerialsVideos', JSON.stringify(videos));
+                closeEditModal();
+                loadVideoTable();
+                alert('Video updated successfully!');
+            }
+        }
+        
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+            editingVideoId = null;
+        }
+        
+        function previewVideo(videoId) {
+            window.open('../index.html', '_blank');
+            // The video will be played on the main site
+        }
+        
+        function deleteVideo(videoId) {
+            if (confirm('Are you sure you want to delete this video?')) {
+                const videos = JSON.parse(localStorage.getItem('tvSerialsVideos')) || [];
+                const filteredVideos = videos.filter(v => v.id !== videoId);
+                localStorage.setItem('tvSerialsVideos', JSON.stringify(filteredVideos));
+                loadVideoTable();
+                updateStats();
+                alert('Video deleted successfully!');
+            }
+        }
+    </script>
+</body>
+  </html>
